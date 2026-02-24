@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "./api/baseApi";
 import authReducer from "./features/auth/authSlice";
-import mediaReducer from "./features/media/mediaSlice";
 
 import {
   FLUSH,
@@ -16,8 +15,6 @@ import {
 
 import storage from "redux-persist/lib/storage";
 
-import notificationReducer from "./features/notification/notificationSlice";
-
 const authPersistConfig = {
   key: "auth",
   storage,
@@ -29,8 +26,6 @@ export const store = configureStore({
   reducer: {
     [baseApi.reducerPath]: baseApi.reducer,
     auth: persistedUserReducer,
-    media: mediaReducer,
-    notification: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
