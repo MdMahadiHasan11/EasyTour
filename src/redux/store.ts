@@ -1,41 +1,28 @@
+// src/store.ts
+"use client";
+
 import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
 import { baseApi } from "./api/baseApi";
-import authReducer from "./features/auth/authSlice";
+// import authReducer from "@/features/auth/authSlice";  // পরে যোগ করো
 
-import {
-  FLUSH,
-  PAUSE,
-  PERSIST,
-  persistReducer,
-  persistStore,
-  PURGE,
-  REGISTER,
-  REHYDRATE,
-} from "redux-persist";
+export const makeStore = () => {
+  const store = configureStore({
+    reducer: {
+      [baseApi.reducerPath]: baseApi.reducer,
+      // auth: authReducer,          // uncomment করো যখন auth slice যোগ করবে
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: false, // অথবা { ignoredActions: [...] } দিয়ে specific করতে পারো
+      }).concat(baseApi.middleware),
+    devTools: process.env.NODE_ENV !== "production",
+  });
 
-import storage from "redux-persist/lib/storage";
-
-const authPersistConfig = {
-  key: "auth",
-  storage,
+  setupListeners(store.dispatch);
+  return store;
 };
 
-const persistedUserReducer = persistReducer(authPersistConfig, authReducer);
-
-export const store = configureStore({
-  reducer: {
-    [baseApi.reducerPath]: baseApi.reducer,
-    auth: persistedUserReducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    }).concat(baseApi.middleware),
-});
-
-export const persistor = persistStore(store);
-
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type AppStore = ReturnType<typeof makeStore>;
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];

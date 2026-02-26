@@ -1,5 +1,6 @@
 import LoginSuccessToast from "@/components/shared/login-success-toast";
 import LogoutSuccessToast from "@/components/shared/logout-success-toast";
+import { ReduxProvider } from "@/provider/redux-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
@@ -32,13 +33,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <Toaster richColors position="top-center" />
-        {children}
-        <Suspense fallback={null}>
-          {" "}
-          <LoginSuccessToast />
-          <LogoutSuccessToast />
-        </Suspense>
+        <ReduxProvider>
+          <Toaster richColors position="top-center" />
+          {children}
+          <Suspense fallback={null}>
+            {" "}
+            <LoginSuccessToast />
+            <LogoutSuccessToast />
+          </Suspense>
+        </ReduxProvider>
       </body>
     </html>
   );

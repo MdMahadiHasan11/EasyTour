@@ -1,15 +1,12 @@
+// src/components/providers/ReduxProvider.tsx
 "use client";
 
-import { store } from "@/redux/store";
-import { ReactNode } from "react";
+import { AppStore, makeStore } from "@/redux/store";
+import { useState, type ReactNode } from "react";
 import { Provider } from "react-redux";
 
-const ReduxProvider = ({
-  children,
-}: Readonly<{
-  children: ReactNode;
-}>) => {
-  return <Provider store={store}>{children}</Provider>;
-};
+export function ReduxProvider({ children }: { children: ReactNode }) {
+  const [store] = useState<AppStore>(() => makeStore());
 
-export default ReduxProvider;
+  return <Provider store={store}>{children}</Provider>;
+}
